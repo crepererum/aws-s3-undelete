@@ -11,3 +11,11 @@ clap = { version = "4.5.17", features = ["derive", "env"] }
 futures = "0.3.30"
 futures-concurrency = "7.6.1"
 tokio = { version = "1", features = ["full"] }
+
+[profile.mini]
+inherits = "release"
+codegen-units = 1
+lto = true
+opt-level = "z"
+panic = "abort"
+strip = true
