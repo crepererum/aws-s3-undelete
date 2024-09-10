@@ -1,3 +1,5 @@
+use std::num::NonZeroUsize;
+
 use anyhow::{Context, Error, Result};
 use aws_sdk_s3::Client;
 use clap::Parser;
@@ -14,6 +16,9 @@ struct Config {
 
     #[clap(long)]
     bucket: String,
+
+    #[clap(long)]
+    concurrency_limit: Option<NonZeroUsize>,
 }
 
 #[tokio::main]
@@ -37,6 +42,7 @@ async fn main() -> Result<()> {
             .map(|res| (res, lines))
     })
     .co()
+    .limit(cfg.concurrency_limit)
     .try_for_each::<_, _, Error>(|line_res| {
         let client = &client;
         let cfg = &cfg;
